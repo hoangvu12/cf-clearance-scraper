@@ -1,5 +1,6 @@
-# Use the official Node.js image as the base image
-FROM node:latest
+FROM node:20-slim
+
+ENV NODE_ENV production
 
 # Install necessary dependencies for running Chrome
 RUN apt-get update && apt-get install -y \
@@ -8,14 +9,17 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     apt-transport-https \
     xvfb \
+    unzip \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Google Chrome
-RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
-    && echo "deb [arch=amd64] https://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list \
-    && apt-get update \
-    && apt-get install -y google-chrome-stable \
-    && rm -rf /var/lib/apt/lists/*
+RUN wget -q -O - 'https://playwright.azureedge.net/builds/chromium/1088/chromium-linux-arm64.zip' && \
+  unzip chromium-linux-arm64.zip && \
+  rm -f ./chromium-linux-arm64.zip
+
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
+ENV CHROME_PATH=/chrome-linux/chrome
+ENV PUPPETEER_EXECUTABLE_PATH=/chrome-linux/chrome
+
 
 # Set up the working directory in the container
 WORKDIR /app
