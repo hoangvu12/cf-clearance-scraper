@@ -1,6 +1,15 @@
-FROM node:20-slim
+# Use the official Node.js image as the base image
+FROM node:latest
 
-ENV NODE_ENV production
+# Install necessary dependencies for running Chrome
+RUN apt-get update && apt-get install -y \
+    xvfb \
+    chromium \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
+ENV CHROME_PATH=/usr/bin/chromium
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
 # Set up the working directory in the container
 WORKDIR /app
@@ -11,24 +20,6 @@ COPY package*.json ./
 # Install Node.js dependencies
 RUN npm install
 RUN npm install -g pm2
-
-# Install necessary dependencies for running Chrome
-RUN apt-get update && apt-get install -y \
-    wget \
-    gnupg \
-    ca-certificates \
-    apt-transport-https \
-    xvfb \
-    unzip \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN wget -q -O chromium-linux-arm64.zip 'https://playwright.azureedge.net/builds/chromium/1088/chromium-linux-arm64.zip' && \
-  unzip chromium-linux-arm64.zip && \
-  rm -f ./chromium-linux-arm64.zip
-
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
-ENV CHROME_PATH=/chrome-linux/chrome
-ENV PUPPETEER_EXECUTABLE_PATH=/chrome-linux/chrome
 
 # Copy the rest of the application code
 COPY . .
