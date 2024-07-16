@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y \
     unzip \
     && rm -rf /var/lib/apt/lists/*
 
-RUN wget -q -O - 'https://playwright.azureedge.net/builds/chromium/1088/chromium-linux-arm64.zip' && \
+RUN wget -q -O chromium-linux-arm64.zip 'https://playwright.azureedge.net/builds/chromium/1088/chromium-linux-arm64.zip' && \
   unzip chromium-linux-arm64.zip && \
   rm -f ./chromium-linux-arm64.zip
 
