@@ -91,7 +91,6 @@ const main = async ({
             },
             ignoreHTTPSErrors: true,
             targetFilter: target => !!target.url(),
-            executablePath: '/usr/bin/chromium',
         });
 
         var page = await browser.pages();
